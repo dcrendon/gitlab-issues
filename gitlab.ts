@@ -1,17 +1,17 @@
-const getUserID = async (
-  gitlabURL: string,
-  headers: Record<string, string>,
-): Promise<number> => {
-  const response = await fetch(`${gitlabURL}/api/v4/user`, {
-    headers,
-  });
-  if (!response.ok) {
-    console.error(`Failed to fetch user information: ${response.statusText}`);
-    Deno.exit(1);
-  }
-  const data = await response.json();
-  return data.id;
-};
+// const getUserID = async (
+//   gitlabURL: string,
+//   headers: Record<string, string>,
+// ): Promise<number> => {
+//   const response = await fetch(`${gitlabURL}/api/v4/user`, {
+//     headers,
+//   });
+//   if (!response.ok) {
+//     console.error(`Failed to fetch user information: ${response.statusText}`);
+//     Deno.exit(1);
+//   }
+//   const data = await response.json();
+//   return data.id;
+// };
 
 // const getProjects = async (
 //   gitlabURL: string,
@@ -55,7 +55,8 @@ export const gitlabIssues = async (
   startDate: string,
   endDate: string,
 ) => {
-  const userID = await getUserID(gitlabURL, headers);
+  // TODO: Implement fetching issues for specific projects for all contributions mode
+  // const userID = await getUserID(gitlabURL, headers);
   // const projects = await getProjects(gitlabURL, headers, userID);
   const issues = await getIssues(gitlabURL, headers, startDate, endDate);
   return issues;
