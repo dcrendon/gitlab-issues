@@ -1,27 +1,31 @@
 import { generateConfig } from "./config.ts";
 import { getDateRange } from "./dates.ts";
-import { getIssues, getUserID } from "./gitlab.ts";
+import { gitlabIssues } from "./gitlab.ts";
 
 const main = async () => {
-  const config = generateConfig();
+  const config = await generateConfig();
 
   const headers = {
-    "PRIVATE-TOKEN": config.gitlabPAT!,
+    "PRIVATE-TOKEN": config.gitlabPAT,
   };
 
-  const userID = await getUserID(config.gitlabURL!, headers);
-  console.log(`Authenticated as User ID: ${userID}`);
+  const { startDate, endDate } = getDateRange(config.timeRange);
 
-  const { startDate, endDate } = getDateRange(config.timeRange!);
-
-  const issues = await getIssues(
+  const issues = await gitlabIssues(
     config.gitlabURL,
     headers,
     startDate,
     endDate,
-    config.projectIDs,
   );
-  console.log(issues);
+  console.log(`Fetched ${issues.length} issues from GitLab.`);
+
+  await Deno.writeTextFile(
+    config.outFile,
+    JSON.stringify(issues, null, 2),
+  );
+
+  prompt("Press Enter to close...");
+  Deno.exit(0);
 };
 
 if (import.meta.main) {

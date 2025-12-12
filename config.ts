@@ -1,6 +1,7 @@
 import { parseArgs, promptSecret } from "@std/cli";
+import { load } from "@std/dotenv";
 
-export interface Config {
+interface Config {
   gitlabPAT: string;
   gitlabURL: string;
   outFile: string;
@@ -9,58 +10,27 @@ export interface Config {
   projectIDs: string[];
 }
 
-// const checkENV = async () => {
-//   await load({ export: true });
-//   const gitlabPAT = Deno.env.get("GITLAB_PAT");
-//   const gitlabURL = Deno.env.get("GITLAB_URL");
-//   const outFile = Deno.env.get("OUT_FILE");
-//   const timeRange = Deno.env.get("TIME_RANGE");
-//   const fetchMode = Deno.env.get("FETCH_MODE");
-//   const projectIDs = Deno.env.get("PROJECT_IDS")?.split(",");
+const checkENV = async (): Promise<Partial<Config>> => {
+  await load({ export: true });
+  const gitlabPAT = Deno.env.get("GITLAB_PAT");
+  const gitlabURL = Deno.env.get("GITLAB_URL");
+  const outFile = Deno.env.get("OUT_FILE");
+  const timeRange = Deno.env.get("TIME_RANGE");
+  const fetchMode = Deno.env.get("FETCH_MODE");
+  const projectIDs = Deno.env.get("PROJECT_IDS")?.split(",");
+  const envParams: Partial<Config> = {
+    gitlabPAT,
+    gitlabURL,
+    outFile,
+    timeRange,
+    fetchMode,
+    projectIDs,
+  };
+  return envParams;
+};
 
-//   return { gitlabPAT, gitlabURL, outFile, timeRange, fetchMode, projectIDs };
-// };
-
-export const generateConfig = (): Config => {
-  // const config: Config = {
-  //   gitlabPAT: "",
-  //   gitlabURL: "",
-  //   outFile: "",
-  //   timeRange: "",
-  //   fetchMode: "",
-  //   projectIDs: [],
-  // };
-
-  // const envConfig = await checkENV();
-
-  // for (const key in envConfig) {
-  //   if (key in config) {
-  //     config[key] = envConfig[key];
-  //   }
-  // }
-
-  const args = parseArgs(Deno.args, {
-    string: ["gitlabPAT", "gitlabURL", "outFile", "timeRange", "fetchMode"],
-    collect: ["projectIDs"],
-    boolean: ["help"],
-    alias: {
-      help: "h",
-      gitlabPAT: "pat",
-      gitlabURL: "url",
-      outFile: "out",
-      timeRange: "range",
-      fetchMode: "mode",
-      projectIDs: "projects",
-    },
-    default: {
-      outFile: "gitlab_issues.json",
-      timeRange: "week",
-      fetchMode: "all_contributions",
-    },
-  });
-
-  if (args.help) {
-    console.log(`
+const printHelp = () => {
+  console.log(`
     Flags:
       --gitlabPAT:
           GitLab Personal Access Token - Required
@@ -88,11 +58,42 @@ export const generateConfig = (): Config => {
       --help,
           Show this help message.
           alias: -h
-    `);
-    Deno.exit(0);
+  `);
+  Deno.exit(0);
+};
+
+export const generateConfig = async (): Promise<Config> => {
+  const envConfig = await checkENV();
+
+  const args = parseArgs(Deno.args, {
+    string: ["gitlabPAT", "gitlabURL", "outFile", "timeRange", "fetchMode"],
+    collect: ["projectIDs"],
+    boolean: ["help"],
+    alias: {
+      help: "h",
+      gitlabPAT: "pat",
+      gitlabURL: "url",
+      outFile: "out",
+      timeRange: "range",
+      fetchMode: "mode",
+      projectIDs: "projects",
+    },
+  });
+
+  if (args.help) {
+    printHelp();
   }
 
-  if (!args.gitlabPAT) {
+  const combinedConfig: Partial<Config> = {
+    gitlabPAT: args.gitlabPAT ?? envConfig.gitlabPAT,
+    gitlabURL: args.gitlabURL ?? envConfig.gitlabURL,
+    outFile: args.outFile ?? envConfig.outFile ?? "gitlab_issues.json",
+    timeRange: args.timeRange ?? envConfig.timeRange ?? "week",
+    fetchMode: args.fetchMode ?? envConfig.fetchMode ?? "all_contributions",
+    projectIDs: (args.projectIDs as string[]) ?? envConfig.projectIDs,
+  };
+
+  if (!combinedConfig.gitlabPAT) {
     const gitlabPAT = promptSecret("Enter your GitLab Personal Access Token:", {
       mask: "*",
     });
@@ -100,10 +101,10 @@ export const generateConfig = (): Config => {
       console.error("GitLab Personal Access Token is required.");
       Deno.exit(1);
     }
-    args.gitlabPAT = gitlabPAT;
+    combinedConfig.gitlabPAT = gitlabPAT;
   }
 
-  if (!args.gitlabURL) {
+  if (!combinedConfig.gitlabURL) {
     const gitlabURL = prompt(
       "Enter your GitLab URL (e.g., https://gitlab.com):",
     );
@@ -111,10 +112,10 @@ export const generateConfig = (): Config => {
       console.error("GitLab URL is required.");
       Deno.exit(1);
     }
-    args.gitlabURL = gitlabURL;
+    combinedConfig.gitlabURL = gitlabURL;
   }
 
-  if (!args.projectIDs) {
+  if (!combinedConfig.projectIDs) {
     const projectIDsInput = prompt(
       "Enter GitLab Project IDs (comma-separated):",
     );
@@ -122,15 +123,19 @@ export const generateConfig = (): Config => {
       console.error("At least one Project ID is required.");
       Deno.exit(1);
     }
-    args.projectIDs = projectIDsInput.split(",").map((id) => id.trim());
+    combinedConfig.projectIDs = projectIDsInput.split(",").map((id) =>
+      id.trim()
+    );
   }
 
-  console.log("Configuration:");
-  console.log(`GitLab URL: ${args.gitlabURL}`);
-  console.log(`Output File: ${args.outFile}`);
-  console.log(`Time Range: ${args.timeRange}`);
-  console.log(`Fetch Mode: ${args.fetchMode}`);
-  console.log(`Project IDs: ${args.projectIDs.join(", ")}`);
+  const finalConfig: Config = combinedConfig as Config;
 
-  return args as Config;
+  console.log("Configuration:");
+  console.log(`GitLab URL: ${finalConfig.gitlabURL}`);
+  console.log(`Output File: ${finalConfig.outFile}`);
+  console.log(`Time Range: ${finalConfig.timeRange}`);
+  console.log(`Fetch Mode: ${finalConfig.fetchMode}`);
+  console.log(`Project IDs: ${finalConfig.projectIDs.join(", ")}`);
+
+  return finalConfig;
 };
