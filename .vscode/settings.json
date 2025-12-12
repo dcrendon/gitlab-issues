@@ -1,0 +1,24 @@
+{
+  // 1. Enable the Deno language server for the workspace
+  "deno.enable": true,
+
+  // 2. Set Deno's built-in formatter (`deno fmt`) as the default
+  "editor.defaultFormatter": "denoland.vscode-deno",
+
+  // 3. Enable formatting when saving a file
+  "editor.formatOnSave": true,
+
+  // 4. Run Deno's code actions (like import sorting/organization) on save
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  },
+
+  // OPTIONAL: Ensure Deno is the formatter specifically for TypeScript/JavaScript files
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  }
+}
