@@ -89,7 +89,7 @@ export const generateConfig = async (): Promise<Config> => {
     gitlabURL: args.gitlabURL ?? envConfig.gitlabURL,
     outFile: args.outFile ?? envConfig.outFile ?? "gitlab_issues.json",
     timeRange: args.timeRange ?? envConfig.timeRange ?? "week",
-    fetchMode: args.fetchMode ?? envConfig.fetchMode ?? "all_contributions",
+    fetchMode: args.fetchMode ?? envConfig.fetchMode ?? "my_issues",
     projectIDs: (args.projectIDs as string[]) ?? envConfig.projectIDs,
   };
 
