@@ -18,14 +18,14 @@ const main = async () => {
     endDate,
     config.fetchMode,
   );
-  console.log(`Fetched ${issues.length} issues from GitLab.`);
 
   await Deno.writeTextFile(
     config.outFile,
     JSON.stringify(issues, null, 2),
   );
+  console.log(`\nIssue data written to ${config.outFile}`);
 
-  prompt("Press Enter to close...");
+  prompt("\nPress Enter to close...");
   Deno.exit(0);
 };
 

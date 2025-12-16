@@ -119,12 +119,12 @@ export const generateConfig = async (): Promise<Config> => {
 
   const finalConfig: Config = combinedConfig as Config;
 
-  console.log("Configuration:");
-  console.log(`GitLab URL: ${finalConfig.gitlabURL}`);
-  console.log(`Output File: ${finalConfig.outFile}`);
-  console.log(`Time Range: ${finalConfig.timeRange}`);
-  console.log(`Fetch Mode: ${finalConfig.fetchMode}`);
-  // console.log(`Project IDs: ${finalConfig.projectIDs.join(", ")}`);
+  console.log(`
+Configuration:
+  - GitLab URL: ${finalConfig.gitlabURL}
+  - Output File: ${finalConfig.outFile}
+  - Time Range: ${finalConfig.timeRange}
+  - Fetch Mode: ${finalConfig.fetchMode}`)
 
   return finalConfig;
 };

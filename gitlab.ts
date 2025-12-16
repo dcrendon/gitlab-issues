@@ -48,7 +48,7 @@ const getUserID = async (
   gitlabURL: string,
   headers: Record<string, string>,
 ): Promise<number> => {
-  console.log("Fetching user information...");
+  console.log("\nFetching user information...");
 
   const response = await fetch(`${gitlabURL}/api/v4/user`, {
     headers,
@@ -69,18 +69,18 @@ const getProjects = async (
   headers: Record<string, string>,
   userID: number,
 ) => {
-  console.log("Fetching projects...");
+  console.log("\nFetching projects...");
 
   const projectsURL = `${gitlabURL}/api/v4/users/${userID}/contributed_projects`;
   const projects = await getPaginatedResults(projectsURL, headers);
 
-  console.log(`Fetched ${projects.length} projects.`);
+  console.log(`Fetched projects: ${projects.length}`);
 
   return projects;
 };
 
 const getIssues = async (projects: any[], gitlabURL: string, headers: Record<string, string>, userID: number, startDate: string, endDate: string, fetchMode: string) => {
-  console.log("Fetching issues...");
+  console.log("\nFetching issues...");
 
   const params = {
     scope: "all",
@@ -140,7 +140,7 @@ const getIssues = async (projects: any[], gitlabURL: string, headers: Record<str
 }
 
 const filterNotes = async(issues: Map<number, GitlabIssue>, gitlabURL: string, headers: Record<string, string>, userID: number, fetchMode: string) => {
-  console.log("Filtering issues based on notes and fetch mode...");
+  console.log("\nFiltering issues based on notes and fetch mode...");
 
   const finalIssues = [];
 
@@ -207,7 +207,7 @@ export const gitlabIssues = async (
   const issuesToProcess = await getIssues(projects, gitlabURL, headers, userID, startDate, endDate, fetchMode);
 
   if (!issuesToProcess.size) {
-    console.log("No issues found to process. Exiting.");
+    console.log("\nNo issues found to process. Exiting.");
     Deno.exit(0);
   }
 

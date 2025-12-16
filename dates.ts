@@ -37,9 +37,10 @@ export const getDateRange = (
   startDate = formatISO(startDate);
   endDate = formatISO(endDate);
 
-  console.log(`Date Range: `);
-  console.log(`From: ${startDate}`);
-  console.log(`To: ${endDate}`);
+  console.log(`
+Date Range:
+  From: ${startDate}
+  To:   ${endDate}`)
 
   return { startDate, endDate };
 };
