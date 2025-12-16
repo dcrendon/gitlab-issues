@@ -71,9 +71,6 @@ const getProjects = async (
 ) => {
   console.log("Fetching projects...");
 
-  // const projectsURL = `${gitlabURL}/api/v4/projects`;
-  // const projects = await getPaginatedResults(projectsURL, headers);
-
   const projectsURL = `${gitlabURL}/api/v4/users/${userID}/contributed_projects`;
   const projects = await getPaginatedResults(projectsURL, headers);
 
@@ -82,20 +79,13 @@ const getProjects = async (
   return projects;
 };
 
-export const gitlabIssues = async (
-  gitlabURL: string,
-  headers: Record<string, string>,
-  startDate: string,
-  endDate: string,
-  fetchMode: string,
-) => {
-  const issuesToProcess = new Map<number, GitlabIssue>();
-  const finalIssues = [];
-  const userID = await getUserID(gitlabURL, headers);
-  const projects = await getProjects(gitlabURL, headers, userID);
+const getIssues = async (projects: any[], gitlabURL: string, headers: Record<string, string>, userID: number, startDate: string, endDate: string, fetchMode: string) => {
+  console.log("Fetching issues...");
+
   const params = {
     scope: "all",
   };
+  const issuesToProcess = new Map<number, GitlabIssue>();
 
   for (const project of projects) {
     const projectID = project.id;
@@ -144,13 +134,17 @@ export const gitlabIssues = async (
     }
   }
 
-  if (!issuesToProcess.size) {
-    console.log("No issues found to process. Exiting.");
-    Deno.exit(0);
-  }
+  console.log(`Total issues fetched for processing: ${issuesToProcess.size}`);
 
-  // Fetch notes for each issue and filter based on fetchMode
-  for (const [_id, issue] of issuesToProcess.entries()) {
+  return issuesToProcess;
+}
+
+const filterNotes = async(issues: Map<number, GitlabIssue>, gitlabURL: string, headers: Record<string, string>, userID: number, fetchMode: string) => {
+  console.log("Filtering issues based on notes and fetch mode...");
+
+  const finalIssues = [];
+
+  for (const [_id, issue] of issues.entries()) {
     const projectID = issue.project_id;
     const issueIID = issue.iid;
 
@@ -193,6 +187,31 @@ export const gitlabIssues = async (
       }
     }
   }
+
+  console.log(`Total issues after filtering: ${finalIssues.length}`);
+
+  return finalIssues;
+}
+
+export const gitlabIssues = async (
+  gitlabURL: string,
+  headers: Record<string, string>,
+  startDate: string,
+  endDate: string,
+  fetchMode: string,
+) => {
+  // const finalIssues = [];
+  const userID = await getUserID(gitlabURL, headers);
+  const projects = await getProjects(gitlabURL, headers, userID);
+
+  const issuesToProcess = await getIssues(projects, gitlabURL, headers, userID, startDate, endDate, fetchMode);
+
+  if (!issuesToProcess.size) {
+    console.log("No issues found to process. Exiting.");
+    Deno.exit(0);
+  }
+
+  const finalIssues = await filterNotes(issuesToProcess, gitlabURL, headers, userID, fetchMode);
 
   return finalIssues;
 };
