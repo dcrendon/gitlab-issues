@@ -2,6 +2,14 @@ import { parseArgs, promptSecret } from "@std/cli";
 import { load } from "@std/dotenv";
 import { Config } from "./types.ts";
 
+export const promptExit = (message: string | null, exitCode: number): never => {
+  if (message) {
+    console.log(message);
+  }
+  prompt("\nPress Enter to close...");
+  Deno.exit(exitCode);
+};
+
 const checkENV = async (): Promise<Partial<Config>> => {
   await load({ export: true });
   const gitlabPAT = Deno.env.get("GITLAB_PAT");
@@ -48,7 +56,7 @@ const printHelp = () => {
           Show this help message.
           alias: -h
   `);
-  Deno.exit(0);
+  promptExit(null, 0);
 };
 
 export const generateConfig = async (): Promise<Config> => {
@@ -87,10 +95,9 @@ export const generateConfig = async (): Promise<Config> => {
       mask: "*",
     });
     if (!gitlabPAT) {
-      console.error("GitLab Personal Access Token is required.");
-      Deno.exit(1);
+      promptExit("GitLab Personal Access Token is required.", 1);
     }
-    combinedConfig.gitlabPAT = gitlabPAT;
+    combinedConfig.gitlabPAT = gitlabPAT as string;
   }
 
   if (!combinedConfig.gitlabURL) {
@@ -98,10 +105,9 @@ export const generateConfig = async (): Promise<Config> => {
       "Enter your GitLab URL (e.g., https://gitlab.com):",
     );
     if (!gitlabURL) {
-      console.error("GitLab URL is required.");
-      Deno.exit(1);
+      promptExit("GitLab URL is required.", 1);
     }
-    combinedConfig.gitlabURL = gitlabURL;
+    combinedConfig.gitlabURL = gitlabURL as string;
   }
 
   // if (!combinedConfig.projectIDs) {

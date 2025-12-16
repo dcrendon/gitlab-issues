@@ -1,3 +1,4 @@
+import { promptExit } from "./config.ts";
 import { GitlabIssue } from "./types.ts";
 
 const getPaginatedResults = async (
@@ -54,8 +55,7 @@ const getUserID = async (
     headers,
   });
   if (!response.ok) {
-    console.error(`Failed to fetch user information: ${response.statusText}`);
-    Deno.exit(1);
+    promptExit(`Failed to fetch user information: ${response.statusText}`, 1);
   }
   const data = await response.json();
 
@@ -138,8 +138,7 @@ const getIssues = async (
         issuesToProcess.set(issue.id, issue);
       }
     } else {
-      console.error(`Invalid fetch mode: ${fetchMode}`);
-      Deno.exit(1);
+      promptExit(`Invalid fetch mode: ${fetchMode}`, 1);
     }
   }
 
@@ -230,8 +229,7 @@ export const gitlabIssues = async (
   );
 
   if (!issuesToProcess.size) {
-    console.log("\nNo issues found to process. Exiting.");
-    Deno.exit(0);
+    promptExit("\nNo issues found to process. Exiting.", 0);
   }
 
   const finalIssues = await filterNotes(

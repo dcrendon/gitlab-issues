@@ -1,4 +1,4 @@
-import { generateConfig } from "./config.ts";
+import { generateConfig, promptExit } from "./config.ts";
 import { getDateRange } from "./dates.ts";
 import { gitlabIssues } from "./gitlab.ts";
 
@@ -25,8 +25,7 @@ const main = async () => {
   );
   console.log(`\nIssue data written to ${config.outFile}`);
 
-  prompt("\nPress Enter to close...");
-  Deno.exit(0);
+  promptExit("Process completed successfully.", 0);
 };
 
 if (import.meta.main) {

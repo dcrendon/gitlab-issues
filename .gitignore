@@ -1,3 +1,4 @@
 .env
 gitlab_issues.json
 gitlab-issues.exe
+*.png

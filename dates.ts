@@ -7,13 +7,14 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
+import { promptExit } from "./config.ts";
 
 export const getDateRange = (
   timeRange: string,
 ): { startDate: string; endDate: string } => {
   const today = new Date();
-  let startDate: Date | string;
-  let endDate: Date | string;
+  let startDate: Date | string = today;
+  let endDate: Date | string = today;
 
   switch (timeRange) {
     case "week": {
@@ -30,8 +31,7 @@ export const getDateRange = (
       endDate = endOfYear(today);
       break;
     default:
-      console.error("Invalid time range specified.");
-      Deno.exit(1);
+      promptExit("Invalid time range specified.", 1);
   }
 
   startDate = formatISO(startDate);
