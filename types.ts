@@ -4,7 +4,7 @@ export interface Config {
   outFile: string;
   timeRange: string;
   fetchMode: string;
-//   projectIDs: string[];
+  //   projectIDs: string[];
 }
 
 interface GitlabUser {

@@ -71,7 +71,8 @@ const getProjects = async (
 ) => {
   console.log("\nFetching projects...");
 
-  const projectsURL = `${gitlabURL}/api/v4/users/${userID}/contributed_projects`;
+  const projectsURL =
+    `${gitlabURL}/api/v4/users/${userID}/contributed_projects`;
   const projects = await getPaginatedResults(projectsURL, headers);
 
   console.log(`Fetched projects: ${projects.length}`);
@@ -79,7 +80,15 @@ const getProjects = async (
   return projects;
 };
 
-const getIssues = async (projects: any[], gitlabURL: string, headers: Record<string, string>, userID: number, startDate: string, endDate: string, fetchMode: string) => {
+const getIssues = async (
+  projects: any[],
+  gitlabURL: string,
+  headers: Record<string, string>,
+  userID: number,
+  startDate: string,
+  endDate: string,
+  fetchMode: string,
+) => {
   console.log("\nFetching issues...");
 
   const params = {
@@ -137,9 +146,15 @@ const getIssues = async (projects: any[], gitlabURL: string, headers: Record<str
   console.log(`Total issues fetched for processing: ${issuesToProcess.size}`);
 
   return issuesToProcess;
-}
+};
 
-const filterNotes = async(issues: Map<number, GitlabIssue>, gitlabURL: string, headers: Record<string, string>, userID: number, fetchMode: string) => {
+const filterNotes = async (
+  issues: Map<number, GitlabIssue>,
+  gitlabURL: string,
+  headers: Record<string, string>,
+  userID: number,
+  fetchMode: string,
+) => {
   console.log("\nFiltering issues based on notes and fetch mode...");
 
   const finalIssues = [];
@@ -191,7 +206,7 @@ const filterNotes = async(issues: Map<number, GitlabIssue>, gitlabURL: string, h
   console.log(`Total issues after filtering: ${finalIssues.length}`);
 
   return finalIssues;
-}
+};
 
 export const gitlabIssues = async (
   gitlabURL: string,
@@ -204,14 +219,28 @@ export const gitlabIssues = async (
   const userID = await getUserID(gitlabURL, headers);
   const projects = await getProjects(gitlabURL, headers, userID);
 
-  const issuesToProcess = await getIssues(projects, gitlabURL, headers, userID, startDate, endDate, fetchMode);
+  const issuesToProcess = await getIssues(
+    projects,
+    gitlabURL,
+    headers,
+    userID,
+    startDate,
+    endDate,
+    fetchMode,
+  );
 
   if (!issuesToProcess.size) {
     console.log("\nNo issues found to process. Exiting.");
     Deno.exit(0);
   }
 
-  const finalIssues = await filterNotes(issuesToProcess, gitlabURL, headers, userID, fetchMode);
+  const finalIssues = await filterNotes(
+    issuesToProcess,
+    gitlabURL,
+    headers,
+    userID,
+    fetchMode,
+  );
 
   return finalIssues;
 };

@@ -40,7 +40,7 @@ export const getDateRange = (
   console.log(`
 Date Range:
   From: ${startDate}
-  To:   ${endDate}`)
+  To:   ${endDate}`);
 
   return { startDate, endDate };
 };

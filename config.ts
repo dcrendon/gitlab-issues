@@ -124,7 +124,7 @@ Configuration:
   - GitLab URL: ${finalConfig.gitlabURL}
   - Output File: ${finalConfig.outFile}
   - Time Range: ${finalConfig.timeRange}
-  - Fetch Mode: ${finalConfig.fetchMode}`)
+  - Fetch Mode: ${finalConfig.fetchMode}`);
 
   return finalConfig;
 };
