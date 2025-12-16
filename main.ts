@@ -16,6 +16,7 @@ const main = async () => {
     headers,
     startDate,
     endDate,
+    config.fetchMode,
   );
   console.log(`Fetched ${issues.length} issues from GitLab.`);
 
