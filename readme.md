@@ -15,6 +15,20 @@ are the author, assignee, or a commenter.
   - `all_contributions`: Includes issues where you commented/participated, even
     if not assigned.
 
+## Quick Start (Windows App)
+
+If prefered you can run the app directly with the pre-compiled execuatable
+
+1. **Download** the latest `gitlab-issues.exe` from the **Releases** section.
+2. **Generate a Gitlab PAT** with the following scopes:
+   - read_api
+   - read_user
+3. **Double-click** the `.exe` file to run it.
+4. **Follow the prompts** on the screen. It will ask for your GitLab URL and
+   Token if you haven't set them up beforehand.
+5. Once it finishes, look for a new file named `gitlab_issues.json` right next
+   to the app.
+
 ## Prerequisites
 
 - [Deno](https://deno.com/)
