@@ -17,6 +17,8 @@ const checkENV = async (): Promise<Partial<Config>> => {
   const outFile = Deno.env.get("OUT_FILE");
   const timeRange = Deno.env.get("TIME_RANGE");
   const fetchMode = Deno.env.get("FETCH_MODE");
+  const startDate = Deno.env.get("START_DATE");
+  const endDate = Deno.env.get("END_DATE");
   // const projectIDs = Deno.env.get("PROJECT_IDS")?.split(",");
   const envParams: Partial<Config> = {
     gitlabPAT,
@@ -24,6 +26,8 @@ const checkENV = async (): Promise<Partial<Config>> => {
     outFile,
     timeRange,
     fetchMode,
+    startDate,
+    endDate,
     // projectIDs,
   };
   return envParams;
@@ -46,12 +50,18 @@ const printHelp = () => {
           Time range for issues
           Alias: --range
           Default: week
-          Options: week, month, year
+          Options: week, month, year, custom
       --fetchMode,
           Fetch mode for issues
           Alias: --mode
           Default: all_contributions
           Options: my_issues, all_contributions
+      --startDate,
+          Custom start date (Format: MM-DD-YYYY)
+          Alias: --start
+      --endDate,
+          Custom end date (Format: MM-DD-YYYY)
+          Alias: --end
       --help,
           Show this help message.
           alias: -h
@@ -63,7 +73,15 @@ export const generateConfig = async (): Promise<Config> => {
   const envConfig = await checkENV();
 
   const args = parseArgs(Deno.args, {
-    string: ["gitlabPAT", "gitlabURL", "outFile", "timeRange", "fetchMode"],
+    string: [
+      "gitlabPAT",
+      "gitlabURL",
+      "outFile",
+      "timeRange",
+      "fetchMode",
+      "startDate",
+      "endDate",
+    ],
     // collect: ["projectIDs"],
     boolean: ["help"],
     alias: {
@@ -73,6 +91,8 @@ export const generateConfig = async (): Promise<Config> => {
       outFile: "out",
       timeRange: "range",
       fetchMode: "mode",
+      startDate: "start",
+      endDate: "end",
       // projectIDs: "projects",
     },
   });
@@ -87,6 +107,8 @@ export const generateConfig = async (): Promise<Config> => {
     outFile: args.outFile ?? envConfig.outFile ?? "gitlab_issues.json",
     timeRange: args.timeRange ?? envConfig.timeRange ?? "week",
     fetchMode: args.fetchMode ?? envConfig.fetchMode ?? "all_contributions",
+    startDate: args.startDate ?? envConfig.startDate,
+    endDate: args.endDate ?? envConfig.endDate,
     // projectIDs: (args.projectIDs as string[]) ?? envConfig.projectIDs,
   };
 

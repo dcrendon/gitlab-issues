@@ -46,7 +46,7 @@ If prefered you can run the app directly with the pre-compiled execuatable
    root directory to save your credentials.
    ```env
    GITLAB_PAT=your_personal_access_token
-   GITLAB_URL=[https://gitlab.com](https://gitlab.com)
+   GITLAB_URL=https://gitlab.com
    OUT_FILE=gitlab_issues.json
    TIME_RANGE=week
    FETCH_MODE=all_contributions
@@ -67,14 +67,16 @@ interactively ask for your URL and Token.
 
 You can override defaults or environment variables using flags:
 
-| Flag          | Alias     | Description                                   | Default              |
-| :------------ | :-------- | :-------------------------------------------- | :------------------- |
-| `--gitlabPAT` | `--pat`   | Your GitLab Personal Access Token             | _Interactive_        |
-| `--gitlabURL` | `--url`   | GitLab instance URL                           | _Interactive_        |
-| `--outFile`   | `--out`   | Filename for the JSON output                  | `gitlab_issues.json` |
-| `--timeRange` | `--range` | Time period to scan (`week`, `month`, `year`) | `week`               |
-| `--fetchMode` | `--mode`  | Scan logic (`my_issues`, `all_contributions`) | `all_contributions`  |
-| `--help`      | `-h`      | Show help message                             | N/A                  |
+| Flag          | Alias     | Description                                               | Default              |
+| :------------ | :-------- | :-------------------------------------------------------- | :------------------- |
+| `--gitlabPAT` | `--pat`   | Your GitLab Personal Access Token                         | _Interactive_        |
+| `--gitlabURL` | `--url`   | GitLab instance URL                                       | _Interactive_        |
+| `--outFile`   | `--out`   | Filename for the JSON output                              | `gitlab_issues.json` |
+| `--timeRange` | `--range` | Time period to scan (`week`, `month`, `year`, `custom`)   | `week`               |
+| `--startDate` | `--start` | Custom start date (`MM-DD-YYYY`) - Required for `custom`  | N/A                  |
+| `--endDate`   | `--end`   | Custom end date (`MM-DD-YYYY`) - Required for `custom`    | N/A                  |
+| `--fetchMode` | `--mode`  | Scan logic (`my_issues`, `all_contributions`)             | `all_contributions`  |
+| `--help`      | `-h`      | Show help message                                         | N/A                  |
 
 **Example:**
 

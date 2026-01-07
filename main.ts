@@ -9,7 +9,7 @@ const main = async () => {
     "PRIVATE-TOKEN": config.gitlabPAT,
   };
 
-  const { startDate, endDate } = getDateRange(config.timeRange);
+  const { startDate, endDate } = getDateRange(config);
 
   const issues = await gitlabIssues(
     config.gitlabURL,

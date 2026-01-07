@@ -4,6 +4,8 @@ export interface Config {
   outFile: string;
   timeRange: string;
   fetchMode: string;
+  startDate?: string;
+  endDate?: string;
   //   projectIDs: string[];
 }
 
